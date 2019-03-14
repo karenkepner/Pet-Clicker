@@ -1,6 +1,5 @@
 /**** View *****/
 let model = {
-  currentPet: null,
   pets: [
     {
       name:   'Amigo',
@@ -51,15 +50,13 @@ let model = {
       altTxt: 'remi the border collie'
     }
   ]
-}
-
+};
 
 /**** Octopus *****/
 let controller = {
 
   init: function() {
     model.currentPet = model.pets[0];
-
     viewPetList.init();
     viewSinglePet.init(model.currentPet.name);
   },
@@ -68,16 +65,13 @@ let controller = {
     return model.pets;
   },
 
-  updateClicks: function(name, clicks) {
-    return 'pie';
+  updateClicks: function(name) {
+    let pets = controller.getPets();
+    let petIndex = pets.findIndex(obj => obj.name === name);
+    model.pets[petIndex].clicks++;
+    viewSinglePet.render(name);
   }
-
-
-
-}
-
-
-
+};
 
 /**** View *****/
 let viewPetList = {
@@ -98,36 +92,48 @@ let viewPetList = {
       petButtonsArray[i].addEventListener('click', function(event) {
         let et = event.target;
         let petName = et.dataset.name;
-        //set currentPet to the clicked button pet.
-
-        console.log('et button click petName: ', petName)
-        //then take that target (the clicked item) and use it to build the clickable pet.
-        console.log('current pet name: ', model.currentPet.name)
         viewSinglePet.init(petName);
       })
     }
   }
-
-
-}
+};
 
 let viewSinglePet = {
+
   init: function(name) {
     let putPetHere = document.querySelector('#petSpace');
-    let petIndex = model.pets.findIndex(obj => obj.name === name);
-    console.log('petIndex: ', petIndex)
+    let pets = controller.getPets();
+    let petIndex = pets.findIndex(obj => obj.name === name);
     let count = model.pets[petIndex].clicks;
     count = parseInt(count);
     let yard = document.createElement('article');
-    
     yard.className = 'clickBox';
     yard.innerHTML = `<div class="title">
-                          <h2>${name}</h2>
+                          <h2 class="name">${name}</h2>
                           <h2>Clicks: <span id="${name}Count">${count}</span></h2>
                       </div>
                       <img class="space" src="images/${name}.jpg" alt="picture of ${name}" />`;
     putPetHere.replaceChild(yard, putPetHere.firstChild );
+    viewSinglePet.upvote();
+  },
+
+  upvote: function() {
+    let pet = document.querySelector('.clickBox');
+    pet.addEventListener('click', function() {
+      //find index of current pet
+      let name = document.querySelector('.name');
+      //use index to increment the click count by one. ++
+      controller.updateClicks(name.textContent);
+    })
+  },
+
+  render: function(name) {
+    //update the count from the model.
+    let pets = controller.getPets();
+    let petIndex = pets.findIndex(obj => obj.name === name);
+    let upvoteCount = document.querySelector(`#${name}count`);
+    upvoteCount.textContent = pets[petIndex].clicks;
   }
-}
+};
 
 controller.init();
