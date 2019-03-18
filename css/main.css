@@ -26,16 +26,9 @@ h2 {
   margin: 1em;
 }
 
-.pet {
+button {
   font-family: 'Shadows Into Light', cursive;
   font-size: 1.5em;
-}
-
-.pet:hover {
-  background-color: lightskyblue;
-}
-
-button {
   border-radius: 0.5em;
   margin-bottom: 0.25em;
   box-shadow:  3px 3px 3px 0 gray;
@@ -43,6 +36,8 @@ button {
 
 button:hover {
   box-shadow:  3px 3px 3px 0 black;
+  background-color: lightskyblue;
+
 }
 
 /* pet display area */
@@ -75,6 +70,10 @@ button:hover {
   width: 90%;
   align-self: center;
   border-radius: 1em;
+}
+
+#adminForm {
+  display: none;
 }
 
 @media screen and (min-width: 500px) {

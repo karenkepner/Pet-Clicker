@@ -5,49 +5,57 @@ let model = {
       name:   'Amigo',
       photo:  'amigo.jpg',
       clicks: 0,
-      altTxt: 'Amigo the chocolate lab dog'
+      altTxt: 'Amigo the chocolate lab dog',
+      imgURL: 'images/amigo.jpg'
     },
     {
       name:   'Bindy',
       photo:  'bindy.jpg',
       clicks: 0,
-      altTxt: 'Bindy the australian shepard dog'   
+      altTxt: 'Bindy the australian shepard dog',
+      imgURL: 'images/bindy.jpg'  
     },
     {
       name:   'Category3',
       photo:  'category3.jpg',
       clicks: 0,
-      altTxt: 'three kittens sleeping in position that looks like the hurricane icon'
+      altTxt: 'three kittens sleeping in position that looks like the hurricane icon',
+      imgURL: 'images/category3.jpg'
     },
     {
       name:   'Earl',
       photo:  'earl.jpg',
       clicks: 0,
-      altTxt: 'earl the giant german shepard with his ball that you can not see'
+      altTxt: 'earl the giant german shepard with his tennis ball',
+      imgURL: 'images/earl.jpg'
     },
     {
       name:   'Hoyt',
       photo:  'hoyt.jpg',
       clicks: 0,
-      altTxt: 'hoyt the border collie'
+      altTxt: 'hoyt the border collie',
+      imgURL: 'images/hoyt.jpg'
     },
     {
       name:   'Maya',
       photo:  'maya.jpg',
       clicks: 0,
-      altTxt: 'maya the golden retriever'
+      altTxt: 'maya the golden retriever',
+      imgURL: 'images/maya.jpg'
     },
     {
       name:   'Ollie',
       photo:  'ollie.jpg',
       clicks: 0,
-      altTxt: 'ollie the striped cat'
+      altTxt: 'ollie the striped cat',
+      imgURL: 'images/ollie.jpg'
     },
     {
       name:   'Remi',
       photo:  'remi.jpg',
       clicks: 0,
-      altTxt: 'remi the border collie'
+      altTxt: 'remi the border collie',
+      imgURL: 'images/remi.jpg'
     }
   ]
 };
@@ -59,6 +67,8 @@ let controller = {
     model.currentPet = model.pets[0];
     viewPetList.init();
     viewSinglePet.init(model.currentPet.name);
+    admin.show();
+    // admin.cancel();
   },
 
   getPets: function() {
@@ -70,6 +80,14 @@ let controller = {
     let petIndex = pets.findIndex(obj => obj.name === name);
     model.pets[petIndex].clicks++;
     viewSinglePet.render(name);
+  },
+
+  updateAdmin: function(index, newName, photo, newClicks) {
+    // debugger;
+    model.pets[index].name = newName;
+    model.pets[index].imgURL = photo;
+    model.pets[index].clicks = newClicks;
+    viewSinglePet.render(newName);
   }
 };
 
@@ -105,6 +123,8 @@ let viewSinglePet = {
     let pets = controller.getPets();
     let petIndex = pets.findIndex(obj => obj.name === name);
     let count = model.pets[petIndex].clicks;
+    let imgURL = model.pets[petIndex].imgURL;
+    let altText = model.pets[petIndex].altTxt;
     count = parseInt(count);
     let yard = document.createElement('article');
     yard.className = 'clickBox';
@@ -112,7 +132,7 @@ let viewSinglePet = {
                           <h2 class="name">${name}</h2>
                           <h2>Clicks: <span id="${name}Count">${count}</span></h2>
                       </div>
-                      <img class="space" src="images/${name}.jpg" alt="picture of ${name}" />`;
+                      <img class="space" src="${imgURL}" alt="${altText}" />`;
     putPetHere.replaceChild(yard, putPetHere.firstChild );
     viewSinglePet.upvote();
   },
@@ -136,4 +156,46 @@ let viewSinglePet = {
   }
 };
 
+let admin = {
+
+  show: function() {
+    let adButton = document.getElementById('adminButton');
+    adButton.addEventListener('click', function() {
+      document.querySelector('#adminForm').style.display = 'block';
+    });
+  },
+
+  cancel: function() {
+    let cancelBTN = document.getElementById('cancel');
+    console.log('cancel button: ', cancelBTN);
+    //this works, but hitting save btn does the same thing. weird. o.
+    cancelBTN.addEventListener('click', function() {
+      console.log('cancel btn click')
+      document.querySelector('#adminForm').style.display = 'none';
+    })
+  },
+
+  save: function() {
+    //on save push new vaues thru controller to update the model.
+    let saveBtn = document.querySelector('#save');
+    console.log('save button loaded')
+    saveBtn.addEventListener('click', function() {
+      //collect values from inputs
+      // debugger;
+      let originalName = document.querySelector('.title .name').value;
+      let pets = controller.getPets();
+      let petIndex = pets.findIndex(obj => obj.name === originalName);
+      let newName = document.querySelector('#petName').value;
+      let newClicks = document.querySelector('#clicksUpdate').value;
+      let newImageURL = document.querySelector('#imageURL').value;
+      console.log('inputs: ', petIndex);
+      //send values to controller to update the model.
+      controller.updateAdmin(petIndex, newName, newClicks, newImageURL);
+    })
+  }
+  
+}
+
 controller.init();
+admin.cancel();
+admin.save();
